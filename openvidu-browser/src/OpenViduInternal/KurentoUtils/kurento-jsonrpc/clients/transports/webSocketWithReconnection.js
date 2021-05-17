@@ -114,16 +114,22 @@ function WebSocketWithReconnection(config) {
         };
 
         ws.onerror = error => {
-            Logger.warn("Reconnection error: ", error);
-            if (numRetries === maxRetries) {
-                if (config.ondisconnect) {
-                    config.ondisconnect();
+            try {
+                Logger.warn("Reconnection error: ", error);
+                if (numRetries === maxRetries) {
+                    if (config.ondisconnect) {
+                        config.ondisconnect();
+                    }
+                } else {
+                    setTimeout(() => {
+                        reconnect(maxRetries, numRetries + 1);
+                    }, RETRY_TIME_MS);
                 }
-            } else {
-                setTimeout(() => {
-                    reconnect(maxRetries, numRetries + 1);
-                }, RETRY_TIME_MS);
+            } catch (error) {
+                console.log("$$$$$$$$$$$$$$$$$$$$$$$$")
+                console.log(error)
             }
+
         };
     }
 
